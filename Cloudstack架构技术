@@ -57,3 +57,48 @@
  + to get them in configure method like this:
  <ComponentLocator locator = ComponentLocator.getCurrentLocator();
  locator.getDao(XXXX.class);>
+ - some init work was done in configure method,such as read global variable
+ - start thread in start method
+ - stop thread in stop method
+ - configure this class in component*.xml
+
+
+ ###Interceptor
+ - Proxy pattern
+ - use cglib library
+ - ActionEventCallback
+ - DatabaseCallback
+
+ ###类命名规则
+- 接口实现的后缀名Impl
+- 对数据库表映射的类，后缀VO
+- 为API层提供服务的类，后缀Service
+- 数据访问类，后缀Dao
+- API对应的实现，后缀Cmd
+- 业务逻辑与Resource之间的通信，后缀Command
+- 物理资源的实现，后缀Resource
+
+###cloudstack包以及依赖关系
+
+|| project || packge || usage||
+
+utils                    cloud-util   工具集，可以在任何项目中使用
+api                      cloud-api  REST API,Java API,Agent API
+core                     cloud-core      ServerResource实现
+server                   cloud-server    管理服务器
+agent                    agent-agent.jar         代理容器
+ovm 					 cloud-ovm.jar           Oracle VM的ServerResource实现
+agent-simulator                                   agent的模拟与回归测试
+vmware-bae                                        vmware的ServerResource实现
+
+cloud-ovm:cloud-vmware-base:agent-simulator->cloud-core->cloud-api->cloud-util
+cloud-server->cloud-api-cloud-util
+cloud-agent->cloud-api->cloud-util
+
+ovm,vmware-base,agent-simulator,core是所有ServerResource基于cloud-api的实现，都不会访问数据库，cloud-agent是基于cloud-api的序列化和反序列化实现，但是理想情况下，cloud-agent仅 仅作为容器并且应当基于cloud-util
+
+
+cloudStack API:
+cloud-api:
+cloud-plugin-api:
+cloud-agent-api:
