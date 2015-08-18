@@ -1,0 +1,59 @@
+###Cloudstack架构技术
+- **ES-Cloud-management为java单进程**
+- **Ioc的实现是使用非开源的实现，类似spring的IOC功能**
+- **AOP：使用cglib实现**
+- **ORM：非开源实现**
+
+
+
+
+###CloudStack模块
++ Services:实现了cloudstack 所有HTTP API
++ Management:
+ - 封装了大部分的业务逻辑
+ - 与Adapter交互实现定制化功能
++ Resources:封装了cloudstack对底层物理资源的大部分的调用
++ Data Access:封装了数据访问逻辑
+
+
+
+###Adapter
+- Adapter framework
+- 模块化、可扩展、可替换
+
+
+###实体类的定义
+- Components-premium.xml:各种实体类的配置
+ - Components.xml：Server、Adaptor、DAO、Interceptor等
+
+
+
+###系统初始化
+- ComponentLocator.java
+ - 读取配置文件
+ - 运行checker,例如升级功能
+ - 创建实例：createInstance，如果需要则创建Interceptor
+ - 配置依赖关系Inject:注入依赖，调用各实例的configure方法
+ - 启动实例：调用各实例的start方法
+
+
+
+###获得实例
+要想获得实例，首先必须先获得ComponentLocator。有三个方法用于获得ComponentLocator：
+
+- getLocator(String server,String configFileName,String log4jFileName);
+- getLocator(String server);
+- getCurrentLocator();
+获得了ComponentLocator的实例之后就可以通过它获得DAO、Manager、Adapter等实例：
+
+- T getDAO(Class<T> classz);
+- T getManager(Class<T> classz);
+
+###Add a new Manager
+- realize com.cloud.utils.component.Manager
+- @Local
+- to get some relative class instance,such as DAO,Adapter
+ + use @Inject
+ + to get them in configure method like this:
+ <ComponentLocator locator = ComponentLocator.getCurrentLocator();
+ locator.getDao(XXXX.class);>
